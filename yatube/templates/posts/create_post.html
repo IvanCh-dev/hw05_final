@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}
+  {% if is_edit %}
+    Редактировать запись
+  {% else %}
+    Новый пост
+  {% endif %}
+{% endblock %}
+{% block content %}
+{% load user_filters %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 p-5">
+        <div class="card">
+          <div class="card-header">       
+            {% if is_edit %}
+              Редактировать запись
+            {% else %}
+              Новый пост
+            {% endif %}            
+          </div>
+          <div class="card-body">        
+            <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+              <div class="form-group row my-3 p-3">
+                <label for="id_text">
+                  {{ form.text.label }}
+                  <span class="required text-danger" >*</span>                  
+                </label>
+                {{ form.text }}
+                <small id="id_text-help" class="form-text text-muted">
+                  {{ form.text.help_text }}
+                </small>                  
+              </div>            
+              <div class="form-group row my-3 p-3">
+                <label for="id_group">
+                  {{ form.group.label }}
+                </label>
+                {{ form.group }}
+                <small id="id_group-help" class="form-text text-muted">
+                  {{ form.group.help_text }}
+                </small>
+              </div>
+              <div class="form-group row my-3 p-3">
+                <label for="id_image">
+                  Картинка
+                </label>
+                {% if is_edit %}
+                {% thumbnail form.image as im %}
+                На данный момент:
+                
+                  <a href="{{ form.instance.image.url }}">
+                    {{ form.instance.image.url }}
+                  </a>
+                {% endthumbnail %}
+                {% endif %}
+                <input type="file" name="image" accept="image/*" class="form-control" id="id_image">
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                  {% if is_edit %}
+                    Сохранить
+                  {% else %}
+                    Добавить
+                {% endif %}   
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

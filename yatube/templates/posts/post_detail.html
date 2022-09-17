@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Пост {{ post.text|slice:':30' }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <aside class="col-12 col-md-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Дата публикации: {{ post.pub_date|date:"d E Y" }}
+        </li>
+        {% if post.group %}
+          <li class="list-group-item">
+            Группа {{ post.group }}
+          </li>
+          <li class="list-group-item">
+            <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+          </li>
+        {% endif %}
+        <li class="list-group-item">
+          <a href="{% url 'posts:profile' post.author.username %}">Автор: {{ post.author.get_full_name }} {{ post.author.username }}</a>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Всего постов автора: <span>{{ post.author.posts.count }}</span >
+        </li>
+        <li class="list-group-item">
+          <a href="{% url 'posts:profile' post.author.username %}">
+            все посты пользователя
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <article class="col-12 col-md-9">
+      {% thumbnail post.image "400x400" crop="center" as im %}
+        <img class="card-img my-2" src="{{ post.image.url }}" width="{{ im.width }}" height="{{ im.height }}">
+      {% endthumbnail %} 
+        <p>
+          {{ post.text }}
+        </p>
+          {% if post.author == request.user %}
+            <a class="btn btn-primary" href="{% url "posts:post_edit" post.id %}">
+              Редактировать запись
+            </a>
+          {% endif %}
+        {% include 'posts/comments.html' %}
+    </article>
+  </div>
+</div>
+{% endblock %}

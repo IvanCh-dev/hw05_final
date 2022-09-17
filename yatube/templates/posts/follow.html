@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Подписки{% endblock %}
+{% block content %}
+{% load cache %}
+{% cache 20 follow_index %}
+{% include 'posts/includes/switcher.html' %}
+<div class="container py-5">
+  {% for post in page_obj %}
+    <ul>
+      <li>
+        <a href="{% url 'posts:profile' post.author.username %}">Автор: {{ post.author.get_full_name }} {{ post.author.username }}</a>
+      </li>
+      <li>
+        Дата публикации: {{ post.pub_date|date:"d E Y" }}
+      </li>
+    </ul>
+    {% thumbnail post.image "400x400" crop="center" as im %}
+      <img class="card-img my-2" src="{{ post.image.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %} 
+    <p>{{ post.text }}</p>
+    {% if post.group %}
+    <li class="list-group-item">
+      Группа {{ post.group }}
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a>
+    </li>
+    {% endif %}
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+{% endcache %}
+{% include 'posts/includes/paginator.html' %}
+</div>
+{% endblock %} 
