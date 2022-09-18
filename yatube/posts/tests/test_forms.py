@@ -83,8 +83,6 @@ class PostsFormsTests(TestCase):
             Group.objects.get(title='Тестовая группа номер 1').title,
             post_3.group.title
         )
-        # self.assertEqual(post_3.image,
-        #                  self.uploaded_image)
         image = ImageFieldFile(
             name='posts/small.gif',
             instance=post_3,

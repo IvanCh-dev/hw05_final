@@ -6,51 +6,50 @@ from ..models import Group, Post
 
 User = get_user_model()
 
-UNAUTHORIZED_URLS = {
-    HTTPStatus.OK: {
-        '/': 'posts/index.html',
-        '/group/test-slug-1/': 'posts/group_list.html',
-        '/profile/test_user/': 'posts/profile.html',
-        '/posts/1/': 'posts/post_detail.html',
-    },
-    HTTPStatus.FOUND: {
-        '/create/': 'users/login.html',
-        '/posts/1/edit/': 'users/login.html',
-    },
-    HTTPStatus.NOT_FOUND: {
-        '/unexisting_page/': 'core/404.html',
-    }
-}
-
-AUTHORIZED_NO_AUTHOR_URLS = {
-    HTTPStatus.OK: {
-        '/': 'posts/index.html',
-        '/group/test-slug-1/': 'posts/group_list.html',
-        '/profile/test_user/': 'posts/profile.html',
-        '/posts/1/': 'posts/post_detail.html',
-        '/create/': 'posts/create_post.html',
-    },
-    HTTPStatus.FOUND: {
-        '/posts/1/edit/': 'posts/post_detail.html',
-    },
-}
-
-AUTHORIZED_AUTHOR_URLS = {
-    HTTPStatus.OK: {
-        '/': 'posts/index.html',
-        '/group/test-slug-1/': 'posts/group_list.html',
-        '/profile/test_user/': 'posts/profile.html',
-        '/posts/1/': 'posts/post_detail.html',
-        '/create/': 'posts/create_post.html',
-        '/posts/1/edit/': 'posts/create_post.html',
-    },
-}
-
 
 class URLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.UNAUTHORIZED_URLS = {
+            HTTPStatus.OK: {
+                '/': 'posts/index.html',
+                '/group/test-slug-1/': 'posts/group_list.html',
+                '/profile/test_user/': 'posts/profile.html',
+                '/posts/1/': 'posts/post_detail.html',
+            },
+            HTTPStatus.FOUND: {
+                '/create/': 'users/login.html',
+                '/posts/1/edit/': 'users/login.html',
+            },
+            HTTPStatus.NOT_FOUND: {
+                '/unexisting_page/': 'core/404.html',
+            }
+        }
+
+        cls.AUTHORIZED_NO_AUTHOR_URLS = {
+            HTTPStatus.OK: {
+                '/': 'posts/index.html',
+                '/group/test-slug-1/': 'posts/group_list.html',
+                '/profile/test_user/': 'posts/profile.html',
+                '/posts/1/': 'posts/post_detail.html',
+                '/create/': 'posts/create_post.html',
+            },
+            HTTPStatus.FOUND: {
+                '/posts/1/edit/': 'posts/post_detail.html',
+            },
+        }
+
+        cls.AUTHORIZED_AUTHOR_URLS = {
+            HTTPStatus.OK: {
+                '/': 'posts/index.html',
+                '/group/test-slug-1/': 'posts/group_list.html',
+                '/profile/test_user/': 'posts/profile.html',
+                '/posts/1/': 'posts/post_detail.html',
+                '/create/': 'posts/create_post.html',
+                '/posts/1/edit/': 'posts/create_post.html',
+            },
+        }
         cls.auth = User.objects.create_user(username='auth')
         cls.group_1 = Group.objects.create(
             title='Тестовая группа номер 1',
@@ -71,7 +70,7 @@ class URLTests(TestCase):
 
     def test_unauthorized_user(self):
         """Проверка ответа сервера для неавторизованного пользователя."""
-        for status, urls in UNAUTHORIZED_URLS.items():
+        for status, urls in self.UNAUTHORIZED_URLS.items():
             if status == HTTPStatus.FOUND:
                 for url, template in urls.items():
                     response = self.guest_client.get(url, follow=True)
@@ -85,7 +84,7 @@ class URLTests(TestCase):
 
     def test_authorized_no_author(self):
         """Проверка ответа сервера для авторизованного не автора."""
-        for status, urls in AUTHORIZED_NO_AUTHOR_URLS.items():
+        for status, urls in self.AUTHORIZED_NO_AUTHOR_URLS.items():
             if status == HTTPStatus.FOUND:
                 for url, template in urls.items():
                     response = self.authorized_test_user.get(url, follow=True)
@@ -99,7 +98,7 @@ class URLTests(TestCase):
 
     def test_authorized_author(self):
         """Проверка ответа сервера для авторизованного автора."""
-        for status, urls in AUTHORIZED_AUTHOR_URLS.items():
+        for status, urls in self.AUTHORIZED_AUTHOR_URLS.items():
             if status == HTTPStatus.FOUND:
                 for url, template in urls.items():
                     response = self.authorized_auth.get(url, follow=True)

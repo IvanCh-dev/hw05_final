@@ -134,9 +134,10 @@ class PostsPagesTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': 16})
         )
         post = response.context['post']
-        self.assertEqual(post.id, 16)
-        self.assertEqual(post.text, 'Пост 16')
-        self.assertEqual(post.author.username, 'test_user')
+        self.assertEqual(post.id, self.posts_list[15].id)
+        self.assertEqual(post.text, self.posts_list[15].text)
+        self.assertEqual(
+            post.author.username, self.posts_list[15].author.username)
         self.assertEqual(post.group, self.group_2)
         self.assertEqual(post.image, self.posts_list[15].image)
 
